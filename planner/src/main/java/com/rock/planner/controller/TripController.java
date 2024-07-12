@@ -2,6 +2,8 @@ package com.rock.planner.controller;
 
 import com.rock.planner.model.*;
 import com.rock.planner.repository.TripRepository;
+import com.rock.planner.service.ActivityService;
+import com.rock.planner.service.LinkService;
 import com.rock.planner.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/trip")
 public class TripController {
+
+    @Autowired
+    private LinkService service;
+
+    @Autowired
+    private ActivityService activityService;
 
     @Autowired
     private ParticipantService participantService;
@@ -98,5 +106,53 @@ public class TripController {
         List<ParticipantData> participantList = this.participantService.getAllParticipantFromEvent(id);
 
         return ResponseEntity.ok(participantList);
+    }
+
+    @PostMapping("/{id}/activities")
+    public ResponseEntity<ActivityResponse> registerActivity(@PathVariable UUID id,
+                                                                 @RequestBody ActivityRequest activityRequest){
+        Optional<Trips> trips = repository.findById(id);
+
+        if(trips.isPresent()){
+            Trips newTrip = trips.get();
+
+            ActivityResponse activityResponse = this.activityService
+                    .registerActivity(activityRequest, newTrip);
+
+            return ResponseEntity.ok(activityResponse);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/activities")
+    public ResponseEntity<List<ActivityData>> getAllActivities(@PathVariable UUID id){
+        List<ActivityData> activityData = this.activityService.getAllActivitiesFromId(id);
+
+        return ResponseEntity.ok(activityData);
+    }
+
+    @PostMapping("/{id}/link")
+    public ResponseEntity<LinksResponse> registerLinks(@PathVariable UUID id,
+                                                             @RequestBody LinksRequest linksRequest){
+        Optional<Trips> trips = repository.findById(id);
+
+        if(trips.isPresent()){
+            Trips newTrip = trips.get();
+
+            LinksResponse linksResponse = this.service
+                    .registerLink(linksRequest, newTrip);
+
+            return ResponseEntity.ok(linksResponse);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/links")
+    public ResponseEntity<List<LinkData>> getAllLinks(@PathVariable UUID id){
+        List<LinkData> linkData = this.service.getAllLinksFromId(id);
+
+        return ResponseEntity.ok(linkData);
     }
 }

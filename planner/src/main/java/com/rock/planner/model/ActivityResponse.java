@@ -2,5 +2,5 @@ package com.rock.planner.model;
 
 import java.util.UUID;
 
-public record TripCreateResponse(UUID tripsId) {
+public record ActivityResponse(UUID activityId) {
 }

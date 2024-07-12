@@ -30,7 +30,7 @@ public class Participant {
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "trip_id", nullable = false)
+    @JoinColumn(name = "trips_id", nullable = false)
     private Trips trips;
 
     public Participant(String email, Trips trips){
